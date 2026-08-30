@@ -22,12 +22,12 @@ jobs:
           python-version: "3.13"
 
       - name: Install dependencies
-        working-directory: backend
+        working-directory: backend/ticket_management_backend
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Check Python files
-        working-directory: backend
+        working-directory: backend/ticket_management_backend
         run: |
           python -m compileall .
