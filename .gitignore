@@ -1,0 +1,26 @@
+# Flutter
+**/.dart_tool/
+**/build/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+
+# Python
+**/venv/
+**/.venv/
+**/__pycache__/
+**/*.py[cod]
+
+# Environment
+**/.env
+**/.env.*
+
+# IDE
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Database backups
+**/*_backup.sql
