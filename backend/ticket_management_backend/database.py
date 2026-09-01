@@ -9,10 +9,14 @@ DATABASE_URL = os.getenv(
     "postgresql+psycopg://postgres:postgres@localhost:5432/ticket_management",
 )
 
-print(
-    "DATABASE HOST:",
-    DATABASE_URL.split("@")[1].split("/")[0]
-)
+# Render provides postgresql://
+# SQLAlchemy needs postgresql+psycopg://
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgresql://",
+        "postgresql+psycopg://",
+        1,
+    )
 
 engine = create_engine(DATABASE_URL)
 
