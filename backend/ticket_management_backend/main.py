@@ -340,6 +340,50 @@ def register(
         "message": "User registered successfully"
     }
 
+# --------------------------------------------------
+# CREATE USER - ADMIN ONLY
+# --------------------------------------------------
+
+@app.post("/users")
+def create_user(
+    user: UserCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
+    # Check whether username already exists
+    existing_user = (
+        db.query(User)
+        .filter(User.username == user.username)
+        .first()
+    )
+
+    if existing_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Username already exists",
+        )
+
+    # Hash password
+    hashed_password = hash_password(user.password)
+
+    # Create user
+    new_user = User(
+        username=user.username,
+        password=hashed_password,
+        role="user",
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return {
+        "message": "User created successfully",
+        "id": new_user.id,
+        "username": new_user.username,
+        "role": new_user.role,
+    }
+
 @app.get("/users")
 def get_users(
     db: Session = Depends(get_db),
