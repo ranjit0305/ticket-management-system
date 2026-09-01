@@ -1,7 +1,18 @@
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "postgresql+psycopg://postgres:postgres@db:5432/ticket_management"
+
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+psycopg://postgres:postgres@localhost:5432/ticket_management",
+)
+
+print(
+    "DATABASE HOST:",
+    DATABASE_URL.split("@")[1].split("/")[0]
+)
 
 engine = create_engine(DATABASE_URL)
 
