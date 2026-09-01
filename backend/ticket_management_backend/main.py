@@ -189,7 +189,7 @@ def create_ticket(
     response_model=TicketResponse,
 )
 def update_ticket(
-    ticket_id: str,
+    ticket_id: int,
     ticket_data: TicketCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -272,7 +272,7 @@ def update_ticket(
 
 @app.delete("/tickets/{ticket_id}")
 def delete_ticket(
-    ticket_id: str,
+    ticket_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
 ):
@@ -401,7 +401,7 @@ def login(
 
 @app.put("/tickets/{ticket_id}/assign/{user_id}")
 def assign_ticket(
-    ticket_id: str,
+    ticket_id: int,
     user_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
