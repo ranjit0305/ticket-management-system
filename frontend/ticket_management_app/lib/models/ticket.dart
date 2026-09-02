@@ -27,40 +27,29 @@ class Ticket {
   // FROM JSON
   // ==================================================
 
-  factory Ticket.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory Ticket.fromJson(Map<String, dynamic> json) {
     return Ticket(
       id: json['id'].toString(),
 
       title: json['title'] ?? '',
 
-      description:
-          json['description'] ?? '',
+      description: json['description'] ?? '',
 
       priority: json['priority'] ?? '',
 
       status: json['status'] ?? '',
 
-      createdBy:
-          json['created_by'] != null
-              ? int.tryParse(
-                  json['created_by'].toString(),
-                )
-              : null,
+      createdBy: json['created_by'] != null
+          ? int.tryParse(json['created_by'].toString())
+          : null,
 
-      createdByUsername:
-          json['created_by_username'],
+      createdByUsername: json['created_by_username'],
 
-      assignedTo:
-          json['assigned_to'] != null
-              ? int.tryParse(
-                  json['assigned_to'].toString(),
-                )
-              : null,
+      assignedTo: json['assigned_to'] != null
+          ? int.tryParse(json['assigned_to'].toString())
+          : null,
 
-      assignedUsername:
-          json['assigned_username'],
+      assignedUsername: json['assigned_username'],
     );
   }
 
@@ -69,12 +58,12 @@ class Ticket {
   // ==================================================
 
   Map<String, dynamic> toJson() {
-  return {
-    'id': id,
-    'title': title,
-    'description': description,
-    'priority': priority,
-    'status': status,
-  };
-}
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'priority': priority,
+      'status': status,
+    };
+  }
 }
