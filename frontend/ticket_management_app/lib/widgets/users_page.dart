@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../models/user.dart';
 import '../services/ticket_service.dart';
+import 'add_user_page.dart';
 
 class UsersPage extends StatefulWidget {
   final TicketService ticketService;
 
-  const UsersPage({
-    super.key,
-    required this.ticketService,
-  });
+  const UsersPage({super.key, required this.ticketService});
 
   @override
   State<UsersPage> createState() => _UsersPageState();
@@ -40,8 +38,7 @@ class _UsersPageState extends State<UsersPage> {
     });
 
     try {
-      final loadedUsers =
-          await widget.ticketService.getUsers();
+      final loadedUsers = await widget.ticketService.getUsers();
 
       if (!mounted) return;
 
@@ -62,6 +59,27 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   // --------------------------------------------------
+  // OPEN ADD USER PAGE
+  // --------------------------------------------------
+
+  Future<void> openAddUserPage() async {
+    final created = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddUserPage(ticketService: widget.ticketService),
+      ),
+    );
+
+    if (created == true && mounted) {
+      await loadUsers();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User created successfully')),
+      );
+    }
+  }
+
+  // --------------------------------------------------
   // BUILD
   // --------------------------------------------------
 
@@ -69,95 +87,89 @@ class _UsersPageState extends State<UsersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Users',
-        ),
+        title: const Text('Users'),
+        actions: [
+          if (widget.ticketService.userRole == 'admin')
+            IconButton(
+              icon: const Icon(Icons.person_add),
+              tooltip: 'Add User',
+              onPressed: openAddUserPage,
+            ),
+        ],
       ),
 
       body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
+          ? const Center(child: CircularProgressIndicator())
           : errorMessage != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        errorMessage!,
-                        style: const TextStyle(
-                          color: Colors.red,
-                        ),
-                      ),
-
-                      const SizedBox(height: 15),
-
-                      ElevatedButton(
-                        onPressed: loadUsers,
-                        child: const Text(
-                          'RETRY',
-                        ),
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    errorMessage!,
+                    style: const TextStyle(color: Colors.red),
                   ),
-                )
-              : users.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No users found',
+
+                  const SizedBox(height: 15),
+
+                  ElevatedButton(
+                    onPressed: loadUsers,
+                    child: const Text('RETRY'),
+                  ),
+                ],
+              ),
+            )
+          : users.isEmpty
+          ? const Center(child: Text('No users found'))
+          : RefreshIndicator(
+              onRefresh: loadUsers,
+
+              child: ListView.builder(
+                itemCount: users.length,
+
+                itemBuilder: (context, index) {
+                  final user = users[index];
+
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        child: Text(
+                          user.username.substring(0, 1).toUpperCase(),
+                        ),
                       ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: loadUsers,
 
-                      child: ListView.builder(
-                        itemCount: users.length,
+                      title: Text(user.fullName ?? user.username),
 
-                        itemBuilder:
-                            (context, index) {
-                          final user = users[index];
+                      subtitle: Text(
+                        [
+                          '@${user.username}',
+                          if (user.department != null &&
+                              user.department!.isNotEmpty)
+                            user.department!,
+                          if (user.email != null && user.email!.isNotEmpty)
+                            user.email!,
+                        ].join(' • '),
+                      ),
 
-                          return Card(
-                            margin:
-                                const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                child: Text(
-                                  user.username
-                                      .substring(0, 1)
-                                      .toUpperCase(),
-                                ),
-                              ),
-
-                              title: Text(
-                                user.username,
-                              ),
-
-                              subtitle: Text(
-                                'User ID: ${user.id}',
-                              ),
-
-                              trailing: Text(
-                                user.role.toUpperCase(),
-                                style: TextStyle(
-                                  fontWeight:
-                                      FontWeight.bold,
-                                  color:
-                                      user.role == 'admin'
-                                          ? Colors.red
-                                          : Colors.blue,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
+                      trailing: Text(
+                        user.role.toUpperCase(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: user.role == 'admin'
+                              ? Colors.red
+                              : Colors.blue,
+                        ),
                       ),
                     ),
+                  );
+                },
+              ),
+            ),
     );
   }
 }

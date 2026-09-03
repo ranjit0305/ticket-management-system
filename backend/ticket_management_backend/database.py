@@ -1,6 +1,6 @@
 import os
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 
@@ -27,6 +27,18 @@ SessionLocal = sessionmaker(
 )
 
 Base = declarative_base()
+
+
+def ensure_user_profile_columns():
+    """Add the optional profile fields when upgrading an existing database."""
+    with engine.begin() as connection:
+        for column in ("full_name", "email", "department"):
+            connection.execute(
+                text(
+                    f"ALTER TABLE users ADD COLUMN IF NOT EXISTS "
+                    f"{column} VARCHAR(255)"
+                )
+            )
 
 
 def get_db():

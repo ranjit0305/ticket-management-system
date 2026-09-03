@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from database import Base, engine, SessionLocal, get_db
+from database import Base, engine, SessionLocal, get_db, ensure_user_profile_columns
 from database import get_db
 from models import User, Ticket
 from schemas import (
@@ -22,6 +22,7 @@ import json
 # --------------------------------------------------
 
 Base.metadata.create_all(bind=engine)
+ensure_user_profile_columns()
 
 
 # --------------------------------------------------
@@ -325,6 +326,9 @@ def register(
         username=user.username,
         password=hashed_password,
         role="user",
+        full_name=user.full_name,
+        email=user.email,
+        department=user.department,
     )
 
     db.add(new_user)
@@ -366,6 +370,9 @@ def create_user(
         username=user.username,
         password=hashed_password,
         role="user",
+        full_name=user.full_name,
+        email=user.email,
+        department=user.department,
     )
 
     db.add(new_user)
@@ -377,6 +384,9 @@ def create_user(
         "id": new_user.id,
         "username": new_user.username,
         "role": new_user.role,
+        "full_name": new_user.full_name,
+        "email": new_user.email,
+        "department": new_user.department,
     }
 
 @app.get("/users")
@@ -391,6 +401,9 @@ def get_users(
             "id": user.id,
             "username": user.username,
             "role": user.role,
+            "full_name": user.full_name,
+            "email": user.email,
+            "department": user.department,
         }
         for user in users
     ]

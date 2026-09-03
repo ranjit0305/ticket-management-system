@@ -78,6 +78,10 @@ class User(Base):
         nullable=False,
     )
 
+    full_name = Column(String(100), nullable=True)
+    email = Column(String(255), nullable=True)
+    department = Column(String(100), nullable=True)
+
     # -----------------------------------------------
     # TICKETS ASSIGNED TO THIS USER
     # -----------------------------------------------

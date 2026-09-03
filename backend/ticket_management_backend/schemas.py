@@ -36,3 +36,6 @@ class TicketResponse(BaseModel):
 class UserCreate(BaseModel):
     username: str
     password: str
+    full_name: str | None = None
+    email: str | None = None
+    department: str | None = None
