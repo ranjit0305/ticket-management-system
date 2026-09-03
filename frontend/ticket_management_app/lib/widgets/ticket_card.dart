@@ -16,14 +16,14 @@ class TicketCard extends StatelessWidget {
   final TicketService ticketService;
   final VoidCallback onTicketAssigned;
   const TicketCard({
-    super.key,
-    required this.ticket,
-    required this.onTicketUpdated,
-    required this.onTicketDeleted,
-    required this.onTicketAssigned,
-    required this.userRole,
-    required this.ticketService,
-  });
+  super.key,
+  required this.ticket,
+  required this.onTicketUpdated,
+  required this.onTicketDeleted,
+  required this.onTicketAssigned,
+  required this.userRole,
+  required this.ticketService,
+});
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +47,17 @@ class TicketCard extends StatelessWidget {
         if (result is Ticket) {
           onTicketUpdated(result);
         }
+
         // -----------------------------------------------
         // TICKET DELETED
         // -----------------------------------------------
+
         else if (result == true) {
           onTicketDeleted();
-        } else if (result == 'assigned') {
-          onTicketUpdated(ticket);
+        }
+
+        else if (result == 'assigned') {
+         onTicketUpdated(ticket); 
         }
       },
 
@@ -62,7 +66,9 @@ class TicketCard extends StatelessWidget {
         margin: const EdgeInsets.all(12),
 
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
+          border: Border.all(
+            color: Colors.grey,
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
 
@@ -76,7 +82,10 @@ class TicketCard extends StatelessWidget {
 
             Text(
               'Ticket #${ticket.id}',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
 
             const SizedBox(height: 8),
@@ -84,25 +93,36 @@ class TicketCard extends StatelessWidget {
             // -------------------------------------------
             // TITLE
             // -------------------------------------------
-            Text(ticket.title, style: const TextStyle(fontSize: 16)),
+
+            Text(
+              ticket.title,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
 
             const SizedBox(height: 12),
 
             // -------------------------------------------
             // PRIORITY + STATUS
             // -------------------------------------------
+
             Row(
               children: [
                 Text(
                   ticket.priority,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
 
                 const Spacer(),
 
                 Text(
                   ticket.status,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -112,9 +132,14 @@ class TicketCard extends StatelessWidget {
             // -------------------------------------------
             // ASSIGNED USER
             // -------------------------------------------
+
             Row(
               children: [
-                const Icon(Icons.person, size: 18, color: Colors.grey),
+                const Icon(
+                  Icons.person,
+                  size: 18,
+                  color: Colors.grey,
+                ),
 
                 const SizedBox(width: 6),
 
@@ -122,7 +147,10 @@ class TicketCard extends StatelessWidget {
                   ticket.assignedUsername != null
                       ? 'Assigned to: ${ticket.assignedUsername}'
                       : 'Not assigned',
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
                 ),
               ],
             ),
@@ -132,10 +160,14 @@ class TicketCard extends StatelessWidget {
             // -------------------------------------------
             // ROLE INFORMATION
             // -------------------------------------------
+
             if (userRole != null)
               Text(
                 'Role: $userRole',
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
               ),
           ],
         ),

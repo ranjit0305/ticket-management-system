@@ -21,45 +21,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+        ),
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF5F7FB),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          foregroundColor: Color(0xFF1F2937),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF6750A4),
-            foregroundColor: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-            textStyle: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-          ),
-        ),
       ),
 
-      routes: {'/login': (context) => LoginPage(ticketService: ticketService)},
+      routes: {
+        '/login': (context) => LoginPage(
+              ticketService: ticketService,
+            ),
+      },
 
       home: FutureBuilder<bool>(
         future: ticketService.loadToken(),
@@ -69,9 +41,12 @@ class MyApp extends StatelessWidget {
           // CHECKING TOKEN
           // ------------------------------------------
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState ==
+              ConnectionState.waiting) {
             return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           }
 
@@ -80,14 +55,18 @@ class MyApp extends StatelessWidget {
           // ------------------------------------------
 
           if (snapshot.data == true) {
-            return MyHomePage(ticketService: ticketService);
+            return MyHomePage(
+              ticketService: ticketService,
+            );
           }
 
           // ------------------------------------------
           // NO TOKEN
           // ------------------------------------------
 
-          return LoginPage(ticketService: ticketService);
+          return LoginPage(
+            ticketService: ticketService,
+          );
         },
       ),
     );

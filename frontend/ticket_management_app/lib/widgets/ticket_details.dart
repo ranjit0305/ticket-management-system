@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../models/ticket.dart';
 import '../models/user.dart';
 import '../services/ticket_service.dart';
-import 'app_ui.dart';
 
 class TicketDetails extends StatefulWidget {
   final Ticket ticket;
@@ -37,9 +36,18 @@ class _TicketDetailsState extends State<TicketDetails> {
 
   int? selectedUserId;
 
-  final List<String> priorities = ['LOW', 'MEDIUM', 'HIGH'];
+  final List<String> priorities = [
+    'LOW',
+    'MEDIUM',
+    'HIGH',
+  ];
 
-  final List<String> statuses = ['OPEN', 'IN PROGRESS', 'RESOLVED', 'CLOSED'];
+  final List<String> statuses = [
+    'OPEN',
+    'IN PROGRESS',
+    'RESOLVED',
+    'CLOSED',
+  ];
 
   bool get isAdmin => widget.userRole == 'admin';
 
@@ -47,7 +55,9 @@ class _TicketDetailsState extends State<TicketDetails> {
   void initState() {
     super.initState();
 
-    titleController = TextEditingController(text: widget.ticket.title);
+    titleController = TextEditingController(
+      text: widget.ticket.title,
+    );
 
     descriptionController = TextEditingController(
       text: widget.ticket.description,
@@ -91,7 +101,8 @@ class _TicketDetailsState extends State<TicketDetails> {
     });
 
     try {
-      final loadedUsers = await widget.ticketService.getUsers();
+      final loadedUsers =
+          await widget.ticketService.getUsers();
 
       if (!mounted) return;
 
@@ -106,8 +117,13 @@ class _TicketDetailsState extends State<TicketDetails> {
         isLoadingUsers = false;
       });
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to load users: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Failed to load users: $e',
+          ),
+        ),
+      );
     }
   }
 
@@ -117,8 +133,11 @@ class _TicketDetailsState extends State<TicketDetails> {
 
   Future<void> saveTicket() async {
     if (titleController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Title cannot be empty')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Title cannot be empty'),
+        ),
+      );
 
       return;
     }
@@ -138,22 +157,35 @@ class _TicketDetailsState extends State<TicketDetails> {
     );
 
     try {
-      final savedTicket = await widget.ticketService.updateTicket(
+      final savedTicket =
+          await widget.ticketService.updateTicket(
         updatedTicket,
       );
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ticket updated successfully')),
+        const SnackBar(
+          content: Text(
+            'Ticket updated successfully',
+          ),
+        ),
       );
 
-      Navigator.pop(context, savedTicket);
+      Navigator.pop(
+        context,
+        savedTicket,
+      );
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to update ticket: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Failed to update ticket: $e',
+          ),
+        ),
+      );
     }
 
     if (mounted) {
@@ -172,8 +204,12 @@ class _TicketDetailsState extends State<TicketDetails> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Delete Ticket'),
-          content: const Text('Are you sure you want to delete this ticket?'),
+          title: const Text(
+            'Delete Ticket',
+          ),
+          content: const Text(
+            'Are you sure you want to delete this ticket?',
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -201,20 +237,34 @@ class _TicketDetailsState extends State<TicketDetails> {
     });
 
     try {
-      await widget.ticketService.deleteTicket(widget.ticket.id);
+      await widget.ticketService.deleteTicket(
+        widget.ticket.id,
+      );
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ticket deleted successfully')),
+        const SnackBar(
+          content: Text(
+            'Ticket deleted successfully',
+          ),
+        ),
       );
 
-      Navigator.pop(context, true);
+      Navigator.pop(
+        context,
+        true,
+      );
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to delete ticket: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Failed to delete ticket: $e',
+          ),
+        ),
+      );
 
       setState(() {
         isDeleting = false;
@@ -228,8 +278,13 @@ class _TicketDetailsState extends State<TicketDetails> {
 
   Future<void> assignTicket() async {
     if (selectedUserId == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Please select a user')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Please select a user',
+          ),
+        ),
+      );
 
       return;
     }
@@ -247,17 +302,29 @@ class _TicketDetailsState extends State<TicketDetails> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ticket assigned successfully')),
+        const SnackBar(
+          content: Text(
+            'Ticket assigned successfully',
+          ),
+        ),
       );
 
       // Reload the ticket list so the new
       // assignment is reflected.
-      Navigator.pop(context, 'assigned');
+      Navigator.pop(
+        context,
+        'assigned',
+      );
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to assign ticket: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Failed to assign ticket: $e',
+          ),
+        ),
+      );
     }
 
     if (mounted) {
@@ -274,23 +341,30 @@ class _TicketDetailsState extends State<TicketDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppUi.canvas,
-      appBar: TicketFlowAppBar(title: 'Ticket #${widget.ticket.id}'),
+      appBar: AppBar(
+        title: Text(
+          'Ticket #${widget.ticket.id}',
+        ),
+      ),
 
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
 
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
 
           children: [
             // ------------------------------------------
             // TICKET ID
             // ------------------------------------------
 
-            PageIntro(
-              title: 'Ticket #${widget.ticket.id}',
-              subtitle: 'Review the details and update its progress.',
+            Text(
+              'Ticket #${widget.ticket.id}',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
 
             const SizedBox(height: 25),
@@ -298,247 +372,291 @@ class _TicketDetailsState extends State<TicketDetails> {
             // ------------------------------------------
             // TITLE
             // ------------------------------------------
-            SurfaceCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: titleController,
-                    decoration: const InputDecoration(
-                      labelText: 'Title',
-                      border: OutlineInputBorder(),
-                    ),
+
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // ------------------------------------------
+            // DESCRIPTION
+            // ------------------------------------------
+
+            TextField(
+              controller: descriptionController,
+              maxLines: 5,
+              decoration: const InputDecoration(
+                labelText: 'Description',
+                border: OutlineInputBorder(),
+                alignLabelWithHint: true,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // ------------------------------------------
+            // PRIORITY
+            // ------------------------------------------
+
+            DropdownButtonFormField<String>(
+              value: selectedPriority,
+
+              decoration: const InputDecoration(
+                labelText: 'Priority',
+                border: OutlineInputBorder(),
+              ),
+
+              items: priorities.map(
+                (priority) {
+                  return DropdownMenuItem<String>(
+                    value: priority,
+                    child: Text(priority),
+                  );
+                },
+              ).toList(),
+
+              onChanged: (value) {
+                if (value == null) return;
+
+                setState(() {
+                  selectedPriority = value;
+                });
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            // ------------------------------------------
+            // STATUS
+            // ------------------------------------------
+
+            DropdownButtonFormField<String>(
+              value: selectedStatus,
+
+              decoration: const InputDecoration(
+                labelText: 'Status',
+                border: OutlineInputBorder(),
+              ),
+
+              items: statuses.map(
+                (status) {
+                  return DropdownMenuItem<String>(
+                    value: status,
+                    child: Text(status),
+                  );
+                },
+              ).toList(),
+
+              onChanged: (value) {
+                if (value == null) return;
+
+                setState(() {
+                  selectedStatus = value;
+                });
+              },
+            ),
+
+            const SizedBox(height: 25),
+
+            // ------------------------------------------
+            // ASSIGNED USER INFORMATION
+            // ------------------------------------------
+
+            Row(
+              children: [
+                const Icon(
+                  Icons.person,
+                  color: Colors.grey,
+                ),
+
+                const SizedBox(width: 8),
+
+                Text(
+                  widget.ticket.assignedUsername != null
+                      ? 'Assigned to: ${widget.ticket.assignedUsername}'
+                      : 'Not assigned',
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+
+            // ------------------------------------------
+            // ADMIN ASSIGNMENT
+            // ------------------------------------------
+
+            if (isAdmin) ...[
+              const SizedBox(height: 25),
+
+              const Text(
+                'Assign Ticket',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              if (isLoadingUsers)
+                const Center(
+                  child: CircularProgressIndicator(),
+                )
+              else if (users.isEmpty)
+                const Text(
+                  'No users available',
+                )
+              else
+                DropdownButtonFormField<int>(
+                  value: users.any(
+                    (user) => user.id == selectedUserId,
+                  )
+                      ? selectedUserId
+                      : null,
+
+                  decoration: const InputDecoration(
+                    labelText: 'Select User',
+                    border: OutlineInputBorder(),
                   ),
 
-                  const SizedBox(height: 20),
-
-                  // ------------------------------------------
-                  // DESCRIPTION
-                  // ------------------------------------------
-                  TextField(
-                    controller: descriptionController,
-                    maxLines: 5,
-                    decoration: const InputDecoration(
-                      labelText: 'Description',
-                      border: OutlineInputBorder(),
-                      alignLabelWithHint: true,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // ------------------------------------------
-                  // PRIORITY
-                  // ------------------------------------------
-                  DropdownButtonFormField<String>(
-                    value: selectedPriority,
-
-                    decoration: const InputDecoration(
-                      labelText: 'Priority',
-                      border: OutlineInputBorder(),
-                    ),
-
-                    items: priorities.map((priority) {
-                      return DropdownMenuItem<String>(
-                        value: priority,
-                        child: Text(priority),
-                      );
-                    }).toList(),
-
-                    onChanged: (value) {
-                      if (value == null) return;
-
-                      setState(() {
-                        selectedPriority = value;
-                      });
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // ------------------------------------------
-                  // STATUS
-                  // ------------------------------------------
-                  DropdownButtonFormField<String>(
-                    value: selectedStatus,
-
-                    decoration: const InputDecoration(
-                      labelText: 'Status',
-                      border: OutlineInputBorder(),
-                    ),
-
-                    items: statuses.map((status) {
-                      return DropdownMenuItem<String>(
-                        value: status,
-                        child: Text(status),
-                      );
-                    }).toList(),
-
-                    onChanged: (value) {
-                      if (value == null) return;
-
-                      setState(() {
-                        selectedStatus = value;
-                      });
-                    },
-                  ),
-
-                  const SizedBox(height: 25),
-
-                  // ------------------------------------------
-                  // ASSIGNED USER INFORMATION
-                  // ------------------------------------------
-                  Row(
-                    children: [
-                      const Icon(Icons.person, color: Colors.grey),
-
-                      const SizedBox(width: 8),
-
-                      Expanded(
+                  items: users.map(
+                    (user) {
+                      return DropdownMenuItem<int>(
+                        value: user.id,
                         child: Text(
-                          widget.ticket.assignedUsername != null
-                              ? 'Assigned to: ${widget.ticket.assignedUsername}'
-                              : 'Not assigned',
-                          style: const TextStyle(fontSize: 16),
+                          '${user.username} (${user.role})',
                         ),
-                      ),
-                    ],
+                      );
+                    },
+                  ).toList(),
+
+                  onChanged: (value) {
+                    setState(() {
+                      selectedUserId = value;
+                    });
+                  },
+                ),
+
+              const SizedBox(height: 12),
+
+              SizedBox(
+                width: double.infinity,
+
+                child: ElevatedButton.icon(
+                  onPressed:
+                      isAssigning ? null : assignTicket,
+
+                  icon: isAssigning
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child:
+                              CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Icon(
+                          Icons.person_add,
+                        ),
+
+                  label: Text(
+                    isAssigning
+                        ? 'ASSIGNING...'
+                        : 'ASSIGN TICKET',
                   ),
+                ),
+              ),
+            ],
 
-                  // ------------------------------------------
-                  // ADMIN ASSIGNMENT
-                  // ------------------------------------------
-                  if (isAdmin) ...[
-                    const SizedBox(height: 25),
+            const SizedBox(height: 30),
 
-                    const Text(
-                      'Assign Ticket',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+            // ------------------------------------------
+            // SAVE BUTTON
+            // ------------------------------------------
+
+            SizedBox(
+              width: double.infinity,
+
+              child: ElevatedButton.icon(
+                onPressed:
+                    isSaving ? null : saveTicket,
+
+                icon: isSaving
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child:
+                            CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.save,
                       ),
-                    ),
 
-                    const SizedBox(height: 12),
+                label: Text(
+                  isSaving
+                      ? 'SAVING...'
+                      : 'SAVE CHANGES',
+                ),
+              ),
+            ),
 
-                    if (isLoadingUsers)
-                      const Center(child: CircularProgressIndicator())
-                    else if (users.isEmpty)
-                      const Text('No users available')
-                    else
-                      DropdownButtonFormField<int>(
-                        value: users.any((user) => user.id == selectedUserId)
-                            ? selectedUserId
-                            : null,
+            // ------------------------------------------
+            // DELETE BUTTON - ADMIN ONLY
+            // ------------------------------------------
 
-                        decoration: const InputDecoration(
-                          labelText: 'Select User',
-                          border: OutlineInputBorder(),
+            if (isAdmin) ...[
+              const SizedBox(height: 12),
+
+              SizedBox(
+                width: double.infinity,
+
+                child: ElevatedButton.icon(
+                  onPressed:
+                      isDeleting ? null : deleteTicket,
+
+                  icon: isDeleting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child:
+                              CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Icon(
+                          Icons.delete,
                         ),
 
-                        items: users.map((user) {
-                          return DropdownMenuItem<int>(
-                            value: user.id,
-                            child: Text('${user.username} (${user.role})'),
-                          );
-                        }).toList(),
-
-                        onChanged: (value) {
-                          setState(() {
-                            selectedUserId = value;
-                          });
-                        },
-                      ),
-
-                    const SizedBox(height: 12),
-
-                    SizedBox(
-                      width: double.infinity,
-
-                      child: ElevatedButton.icon(
-                        onPressed: isAssigning ? null : assignTicket,
-
-                        icon: isAssigning
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.person_add),
-
-                        label: Text(
-                          isAssigning ? 'ASSIGNING...' : 'ASSIGN TICKET',
-                        ),
-                      ),
-                    ),
-                  ],
-
-                  const SizedBox(height: 30),
-
-                  // ------------------------------------------
-                  // SAVE BUTTON
-                  // ------------------------------------------
-                  SizedBox(
-                    width: double.infinity,
-
-                    child: ElevatedButton.icon(
-                      onPressed: isSaving ? null : saveTicket,
-
-                      icon: isSaving
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.save),
-
-                      label: Text(isSaving ? 'SAVING...' : 'SAVE CHANGES'),
-                    ),
+                  label: Text(
+                    isDeleting
+                        ? 'DELETING...'
+                        : 'DELETE TICKET',
                   ),
+                ),
+              ),
+            ],
 
-                  // ------------------------------------------
-                  // DELETE BUTTON - ADMIN ONLY
-                  // ------------------------------------------
-                  if (isAdmin) ...[
-                    const SizedBox(height: 12),
+            const SizedBox(height: 30),
 
-                    SizedBox(
-                      width: double.infinity,
+            // ------------------------------------------
+            // ROLE
+            // ------------------------------------------
 
-                      child: ElevatedButton.icon(
-                        onPressed: isDeleting ? null : deleteTicket,
-
-                        icon: isDeleting
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.delete),
-
-                        label: Text(
-                          isDeleting ? 'DELETING...' : 'DELETE TICKET',
-                        ),
-                      ),
-                    ),
-                  ],
-
-                  const SizedBox(height: 30),
-
-                  // ------------------------------------------
-                  // ROLE
-                  // ------------------------------------------
-                  Center(
-                    child: Text(
-                      'Logged in as: ${widget.userRole ?? 'user'}',
-                      style: const TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-                  ),
-                ],
+            Center(
+              child: Text(
+                'Logged in as: ${widget.userRole ?? 'user'}',
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 13,
+                ),
               ),
             ),
           ],

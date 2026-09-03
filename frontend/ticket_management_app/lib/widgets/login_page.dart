@@ -1,155 +1,250 @@
 import 'package:flutter/material.dart';
 
 import '../services/ticket_service.dart';
-import 'app_ui.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   final TicketService ticketService;
-  const LoginPage({super.key, required this.ticketService});
+
+  const LoginPage({
+    super.key,
+    required this.ticketService,
+  });
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
+  final TextEditingController usernameController =
+      TextEditingController();
+
+  final TextEditingController passwordController =
+      TextEditingController();
+
   bool isLoading = false;
-  bool obscurePassword = true;
   String? errorMessage;
 
+  // --------------------------------------------------
+  // LOGIN
+  // --------------------------------------------------
+
   Future<void> login() async {
-    final username = usernameController.text.trim();
-    if (username.isEmpty || passwordController.text.isEmpty) {
-      setState(() => errorMessage = 'Please enter username and password');
+    final username =
+        usernameController.text.trim();
+
+    final password =
+        passwordController.text;
+
+    // -----------------------------------------------
+    // VALIDATION
+    // -----------------------------------------------
+
+    if (username.isEmpty || password.isEmpty) {
+      setState(() {
+        errorMessage =
+            'Please enter username and password';
+      });
+
       return;
     }
+
     setState(() {
       isLoading = true;
       errorMessage = null;
     });
+
     try {
-      await widget.ticketService.login(username, passwordController.text);
+      await widget.ticketService.login(
+        username,
+        password,
+      );
+
       if (!mounted) return;
+
+      // ---------------------------------------------
+      // LOGIN SUCCESS
+      // ---------------------------------------------
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => MyHomePage(ticketService: widget.ticketService),
+          builder: (context) => MyHomePage(
+            ticketService: widget.ticketService,
+          ),
         ),
       );
-    } catch (_) {
-      if (mounted)
-        setState(() => errorMessage = 'Invalid username or password');
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        errorMessage =
+            'Invalid username or password';
+      });
     } finally {
-      if (mounted) setState(() => isLoading = false);
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
     }
   }
+
+  // --------------------------------------------------
+  // DISPOSE
+  // --------------------------------------------------
 
   @override
   void dispose() {
     usernameController.dispose();
     passwordController.dispose();
+
     super.dispose();
   }
 
+  // --------------------------------------------------
+  // UI
+  // --------------------------------------------------
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: AppUi.canvas,
-    appBar: const TicketFlowAppBar(title: 'TicketFlow'),
-    body: Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 460),
-          child: SurfaceCard(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  height: 52,
-                  width: 52,
-                  decoration: BoxDecoration(
-                    color: AppUi.primary.withOpacity(.12),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(Icons.lock_outline, color: AppUi.primary),
-                ),
-                const SizedBox(height: 22),
-                const Text(
-                  'Welcome back',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: AppUi.title,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Sign in to manage your support tickets.',
-                  style: TextStyle(color: Colors.grey.shade600),
-                ),
-                const SizedBox(height: 28),
-                TextField(
-                  controller: usernameController,
-                  textInputAction: TextInputAction.next,
-                  decoration: AppUi.input(
-                    label: 'Username',
-                    hint: 'Enter your username',
-                    prefixIcon: const Icon(Icons.person_outline),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: passwordController,
-                  obscureText: obscurePassword,
-                  onSubmitted: (_) {
-                    if (!isLoading) login();
-                  },
-                  decoration: AppUi.input(
-                    label: 'Password',
-                    hint: 'Enter your password',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                      ),
-                      onPressed: () =>
-                          setState(() => obscurePassword = !obscurePassword),
-                    ),
-                  ),
-                ),
-                if (errorMessage != null) ...[
-                  const SizedBox(height: 16),
-                  Text(
-                    errorMessage!,
-                    style: const TextStyle(
-                      color: Colors.redAccent,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: isLoading ? null : login,
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('SIGN IN'),
-                  ),
-                ),
-              ],
-            ),
-          ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Login',
         ),
       ),
-    ),
-  );
+
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+
+          children: [
+            // ----------------------------------------
+            // TITLE
+            // ----------------------------------------
+
+            const Text(
+              'Ticket Management System',
+
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            // ----------------------------------------
+            // USERNAME
+            // ----------------------------------------
+
+            TextField(
+              controller: usernameController,
+
+              textInputAction:
+                  TextInputAction.next,
+
+              decoration:
+                  const InputDecoration(
+                labelText: 'Username',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(
+                  Icons.person,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // ----------------------------------------
+            // PASSWORD
+            // ----------------------------------------
+
+            TextField(
+              controller: passwordController,
+
+              obscureText: true,
+
+              onSubmitted: (_) {
+                if (!isLoading) {
+                  login();
+                }
+              },
+
+              decoration:
+                  const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(
+                  Icons.lock,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // ----------------------------------------
+            // ERROR MESSAGE
+            // ----------------------------------------
+
+            if (errorMessage != null)
+              Padding(
+                padding:
+                    const EdgeInsets.only(
+                  bottom: 10,
+                ),
+
+                child: Text(
+                  errorMessage!,
+
+                  style: const TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+
+            // ----------------------------------------
+            // LOGIN BUTTON
+            // ----------------------------------------
+
+            SizedBox(
+              width: double.infinity,
+
+              child: ElevatedButton(
+                onPressed:
+                    isLoading ? null : login,
+
+                child: Padding(
+                  padding:
+                      const EdgeInsets.all(14),
+
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+
+                          child:
+                              CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'LOGIN',
+
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

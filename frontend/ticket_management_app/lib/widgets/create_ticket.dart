@@ -1,113 +1,217 @@
 import 'package:flutter/material.dart';
-
 import '../models/ticket.dart';
-import 'app_ui.dart';
 
 class CreateTicket extends StatefulWidget {
-  const CreateTicket({super.key});
+  const CreateTicket({
+    super.key,
+  });
+
   @override
   State<CreateTicket> createState() => _CreateTicketState();
 }
 
 class _CreateTicketState extends State<CreateTicket> {
-  final formKey = GlobalKey<FormState>();
-  final titleController = TextEditingController();
-  final descriptionController = TextEditingController();
+  // --------------------------------------------------
+  // FORM KEY
+  // --------------------------------------------------
+
+  final GlobalKey<FormState> formKey =
+      GlobalKey<FormState>();
+
+  // --------------------------------------------------
+  // CONTROLLERS
+  // --------------------------------------------------
+
+  final TextEditingController titleController =
+      TextEditingController();
+
+  final TextEditingController descriptionController =
+      TextEditingController();
+
+  // --------------------------------------------------
+  // DEFAULT PRIORITY
+  // --------------------------------------------------
+
   String selectedPriority = 'HIGH';
+
+  // --------------------------------------------------
+  // DISPOSE
+  // --------------------------------------------------
+
   @override
   void dispose() {
     titleController.dispose();
     descriptionController.dispose();
+
     super.dispose();
   }
 
+  // --------------------------------------------------
+  // CREATE TICKET
+  // --------------------------------------------------
+
   void createTicket() {
-    if (!formKey.currentState!.validate()) return;
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+
+    final newTicket = Ticket(
+      // Backend will generate the actual ID.
+      id: '',
+
+      title: titleController.text.trim(),
+
+      description:
+          descriptionController.text.trim(),
+
+      priority: selectedPriority,
+
+      status: 'OPEN',
+    );
+
     Navigator.pop(
       context,
-      Ticket(
-        id: '',
-        title: titleController.text.trim(),
-        description: descriptionController.text.trim(),
-        priority: selectedPriority,
-        status: 'OPEN',
-      ),
+      newTicket,
     );
   }
 
+  // --------------------------------------------------
+  // BUILD
+  // --------------------------------------------------
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: AppUi.canvas,
-    appBar: const TicketFlowAppBar(title: 'New Ticket'),
-    body: SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Form(
-        key: formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const PageIntro(
-              title: 'Create a ticket',
-              subtitle: 'Share the details and we will help get it resolved.',
-            ),
-            const SizedBox(height: 22),
-            SurfaceCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: titleController,
-                    decoration: AppUi.input(
-                      label: 'Title',
-                      hint: 'What do you need help with?',
-                      prefixIcon: const Icon(Icons.subject_outlined),
-                    ),
-                    validator: (v) => v == null || v.trim().isEmpty
-                        ? 'Please enter a title'
-                        : null,
-                  ),
-                  const SizedBox(height: 18),
-                  TextFormField(
-                    controller: descriptionController,
-                    maxLines: 5,
-                    decoration: AppUi.input(
-                      label: 'Description',
-                      hint: 'Describe the issue',
-                      prefixIcon: const Icon(Icons.notes_outlined),
-                    ),
-                    validator: (v) => v == null || v.trim().isEmpty
-                        ? 'Please enter a description'
-                        : null,
-                  ),
-                  const SizedBox(height: 18),
-                  DropdownButtonFormField<String>(
-                    value: selectedPriority,
-                    decoration: AppUi.input(
-                      label: 'Priority',
-                      prefixIcon: const Icon(Icons.flag_outlined),
-                    ),
-                    items: const [
-                      DropdownMenuItem(value: 'HIGH', child: Text('High')),
-                      DropdownMenuItem(value: 'MEDIUM', child: Text('Medium')),
-                      DropdownMenuItem(value: 'LOW', child: Text('Low')),
-                    ],
-                    onChanged: (v) => setState(() => selectedPriority = v!),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    height: 52,
-                    child: ElevatedButton.icon(
-                      onPressed: createTicket,
-                      icon: const Icon(Icons.add),
-                      label: const Text('CREATE TICKET'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Create Ticket',
         ),
       ),
-    ),
-  );
+
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+
+        child: Form(
+          key: formKey,
+
+          child: Column(
+            children: [
+
+              // ----------------------------------------
+              // TITLE
+              // ----------------------------------------
+
+              TextFormField(
+                controller: titleController,
+
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                  hintText: 'Enter ticket title',
+                  border: OutlineInputBorder(),
+                ),
+
+                validator: (value) {
+                  if (value == null ||
+                      value.trim().isEmpty) {
+                    return 'Please enter a title';
+                  }
+
+                  return null;
+                },
+              ),
+
+              const SizedBox(height: 16),
+
+              // ----------------------------------------
+              // DESCRIPTION
+              // ----------------------------------------
+
+              TextFormField(
+                controller:
+                    descriptionController,
+
+                maxLines: 4,
+
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  hintText: 'Describe the issue',
+                  border: OutlineInputBorder(),
+                ),
+
+                validator: (value) {
+                  if (value == null ||
+                      value.trim().isEmpty) {
+                    return 'Please enter a description';
+                  }
+
+                  return null;
+                },
+              ),
+
+              const SizedBox(height: 16),
+
+              // ----------------------------------------
+              // PRIORITY
+              // ----------------------------------------
+
+              DropdownButtonFormField<String>(
+                initialValue:
+                    selectedPriority,
+
+                decoration:
+                    const InputDecoration(
+                  labelText: 'Priority',
+                  border:
+                      OutlineInputBorder(),
+                ),
+
+                items: const [
+                  DropdownMenuItem(
+                    value: 'HIGH',
+                    child: Text('HIGH'),
+                  ),
+
+                  DropdownMenuItem(
+                    value: 'MEDIUM',
+                    child: Text('MEDIUM'),
+                  ),
+
+                  DropdownMenuItem(
+                    value: 'LOW',
+                    child: Text('LOW'),
+                  ),
+                ],
+
+                onChanged: (value) {
+                  if (value == null) return;
+
+                  setState(() {
+                    selectedPriority = value;
+                  });
+                },
+              ),
+
+              const SizedBox(height: 24),
+
+              // ----------------------------------------
+              // CREATE BUTTON
+              // ----------------------------------------
+
+              SizedBox(
+                width: double.infinity,
+
+                child: ElevatedButton(
+                  onPressed: createTicket,
+
+                  child: const Text(
+                    'Create Ticket',
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

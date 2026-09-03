@@ -228,11 +228,6 @@ def update_ticket(
     ticket.priority = ticket_data.priority
     ticket.status = ticket_data.status
 
-    # IMPORTANT:
-    # Do NOT modify:
-    #
-    # ticket.created_by
-    # ticket.assigned_to
 
     db.commit()
 
