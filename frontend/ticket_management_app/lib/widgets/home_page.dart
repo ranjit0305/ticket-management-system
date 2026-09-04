@@ -43,14 +43,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int get completedTickets =>
       tickets.where(
-        (ticket) => ticket.status == 'COMPLETED',
+        (ticket) => ticket.status == 'RESOLVED' || ticket.status == 'CLOSED',
       ).length;
 
   // ==================================================
   // STATISTIC CARD
   // ==================================================
 
-  Widget buildStatCard(
+  Widget buildStatCard( //recallable widget
     String title,
     int value,
     IconData icon,
@@ -460,50 +460,20 @@ class _MyHomePageState extends State<MyHomePage> {
                                     // --------------------------
 
                                     onTicketUpdated:
-                                        (updatedTicket) async {
-                                      try {
-                                        final savedTicket =
-                                            await widget
-                                                .ticketService
-                                                .updateTicket(
-                                          updatedTicket,
-                                        );
-
-                                        if (!mounted) {
-                                          return;
-                                        }
-
-                                        setState(() {
-                                          tickets[index] =
-                                              savedTicket;
-                                        });
-
-                                        ScaffoldMessenger
-                                            .of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Ticket updated successfully',
-                                            ),
+                                        (updatedTicket) {
+                                      setState(() {
+                                        tickets[index] = updatedTicket;
+                                      });
+                                      
+                                      ScaffoldMessenger
+                                          .of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Ticket updated successfully',
                                           ),
-                                        );
-                                      } catch (e) {
-                                        print(e);
-
-                                        if (!mounted) {
-                                          return;
-                                        }
-
-                                        ScaffoldMessenger
-                                            .of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Failed to update ticket: $e',
-                                            ),
-                                          ),
-                                        );
-                                      }
+                                        ),
+                                      );
                                     },
 
                                     // --------------------------
